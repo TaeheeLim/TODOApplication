@@ -41,7 +41,6 @@ public class TodoServiceImpl implements TodoService {
 
         return todoRepository.findByUserId(entity.getUserId());
     }
-
     private void validate(TodoEntity entity) {
         if (entity == null) {
             log.warn("Entity cannot be null");
