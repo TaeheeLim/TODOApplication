@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +39,11 @@ public class TodoController {
             List<TodoEntity> entities = todoService.create(entity);
 
             List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+            System.out.println("dtos = " + dtos);
+
+            List<TodoDTO> collect = entities.stream()
+                    .map(todoEntity -> new TodoDTO(todoEntity.getId(), todoEntity.getTitle(), todoEntity.isDone()))
+                        .collect(Collectors.toList());
 
             ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder()
                     .data(dtos)
@@ -60,10 +63,13 @@ public class TodoController {
     @GetMapping
     public ResponseEntity<?> retrieveTodoList(
             @AuthenticationPrincipal String userId){
-
+        log.info("does it come??");
         List<TodoEntity> entities = todoService.retrieve(userId);
 
-        List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+        List<TodoDTO> dtos = entities
+                                .stream()
+                                    .map(TodoDTO::new)
+                                            .collect(Collectors.toList());
 
         ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder()
                 .data(dtos)
